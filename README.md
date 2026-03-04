@@ -1,5 +1,7 @@
 # dotmysvg
 
+**[Try it live](https://haavelund.no/dotmysvg/)**
+
 A browser-based tool for importing any SVG icon and adding a customizable dot indicator to it — useful for creating "unread" badges, notification markers, or status indicators on existing icons.
 
 ## Features
