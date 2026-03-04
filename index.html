@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unread History Icon Generator</title>
+    <title>SVG Dot Icon Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       /* Custom checkerboard background for transparency visualization */
@@ -35,6 +35,15 @@
       textarea::-webkit-scrollbar-thumb:hover {
         background: #4b5563;
       }
+      /* Drop zone styling */
+      .drop-zone {
+        border: 2px dashed #4b5563;
+        transition: all 0.2s;
+      }
+      .drop-zone.dragover {
+        border-color: #60a5fa;
+        background: rgba(96, 165, 250, 0.05);
+      }
     </style>
   </head>
   <body
@@ -44,181 +53,234 @@
     <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
       <!-- LEFT COLUMN: Controls (Takes up 4 columns) -->
       <div
-        class="lg:col-span-4 bg-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-800 flex flex-col justify-center"
+        class="lg:col-span-4 bg-gray-900 p-6 rounded-2xl shadow-2xl border border-gray-800 flex flex-col"
       >
-        <h1 class="text-3xl font-bold mb-8 text-white flex items-center gap-3">
+        <h1 class="text-3xl font-bold mb-6 text-white flex items-center gap-3">
           <span class="bg-blue-600 p-2 rounded-lg">
             <svg
               class="w-6 h-6 text-white"
-              fill="currentColor"
-              viewBox="0 -960 960 960"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
               <path
-                d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
           </span>
-          Icon Editor
+          SVG Dot Editor
         </h1>
 
-        <!-- Angle Control -->
+        <!-- SVG Import Section -->
         <div class="mb-6">
-          <div class="flex justify-between mb-2">
-            <label
-              class="text-sm font-bold text-gray-400 uppercase tracking-wider"
-              >Position (Angle)</label
-            >
-            <span
-              id="val-angle"
-              class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
-              >45°</span
-            >
-          </div>
-          <input
-            type="range"
-            id="angle"
-            min="0"
-            max="360"
-            value="45"
-            class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
-
-        <!-- Distance Control -->
-        <div class="mb-6">
-          <div class="flex justify-between mb-2">
-            <label
-              class="text-sm font-bold text-gray-400 uppercase tracking-wider"
-              >Distance from Center</label
-            >
-            <span
-              id="val-dist"
-              class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
-              >360</span
-            >
-          </div>
-          <input
-            type="range"
-            id="distance"
-            min="250"
-            max="450"
-            value="360"
-            class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
-
-        <div class="h-px bg-gray-800 my-4"></div>
-
-        <!-- Dot Size Control -->
-        <div class="mb-6">
-          <div class="flex justify-between mb-2">
-            <label
-              class="text-sm font-bold text-gray-400 uppercase tracking-wider"
-              >Dot Radius</label
-            >
-            <span
-              id="val-dot"
-              class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
-              >70</span
-            >
-          </div>
-          <input
-            type="range"
-            id="dotSize"
-            min="30"
-            max="150"
-            value="70"
-            class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
-
-        <!-- Gap Size Control -->
-        <div class="mb-6">
-          <div class="flex justify-between mb-2">
-            <label
-              class="text-sm font-bold text-gray-400 uppercase tracking-wider"
-              >Gap Width</label
-            >
-            <span
-              id="val-gap"
-              class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
-              >40</span
-            >
-          </div>
-          <input
-            type="range"
-            id="gapSize"
-            min="0"
-            max="100"
-            value="40"
-            class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
-
-        <!-- Color Control -->
-        <div class="mb-8">
           <label
             class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2 block"
-            >Icon Color</label
+            >Import SVG</label
           >
           <div
-            class="flex gap-3 items-center bg-gray-800 border border-gray-700 p-3 rounded-lg hover:border-gray-600 transition"
+            id="drop-zone"
+            class="drop-zone rounded-xl p-6 text-center cursor-pointer"
+            onclick="document.getElementById('file-input').click()"
           >
             <input
-              type="color"
-              id="color"
-              value="#e3e3e3"
-              class="w-10 h-10 rounded border-0 cursor-pointer bg-transparent p-0"
+              type="file"
+              id="file-input"
+              accept=".svg,image/svg+xml"
+              class="hidden"
             />
-            <input
-              type="text"
-              id="colorText"
-              value="#e3e3e3"
-              class="bg-transparent text-base w-full outline-none font-mono text-white uppercase"
-            />
+            <div id="drop-zone-content">
+              <svg
+                class="w-10 h-10 mx-auto mb-3 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <p class="text-sm text-gray-400">
+                Drop an SVG file here or <span class="text-blue-400 underline">browse</span>
+              </p>
+            </div>
+            <div id="drop-zone-loaded" class="hidden">
+              <div class="flex items-center justify-center gap-2 text-green-400">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span id="loaded-filename" class="text-sm font-medium truncate max-w-[200px]" title=""></span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Click or drop to replace</p>
+            </div>
           </div>
         </div>
 
-        <!-- Buttons -->
-        <div class="grid grid-cols-2 gap-4 mt-auto">
-          <button
-            onclick="downloadSVG()"
-            class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-4 rounded-xl transition flex justify-center items-center gap-2 shadow-lg shadow-blue-900/20"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <div id="controls-section" class="hidden">
+          <div class="h-px bg-gray-800 my-2"></div>
+
+          <!-- Angle Control -->
+          <div class="mb-5">
+            <div class="flex justify-between mb-2">
+              <label
+                class="text-sm font-bold text-gray-400 uppercase tracking-wider"
+                >Position (Angle)</label
+              >
+              <span
+                id="val-angle"
+                class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
+                >45°</span
+              >
+            </div>
+            <input
+              type="range"
+              id="angle"
+              min="0"
+              max="360"
+              value="45"
+              class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            />
+          </div>
+
+          <!-- Distance Control -->
+          <div class="mb-5">
+            <div class="flex justify-between mb-2">
+              <label
+                class="text-sm font-bold text-gray-400 uppercase tracking-wider"
+                >Distance from Center</label
+              >
+              <span
+                id="val-dist"
+                class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
+                >360</span
+              >
+            </div>
+            <input
+              type="range"
+              id="distance"
+              min="0"
+              max="500"
+              value="360"
+              class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            />
+          </div>
+
+          <!-- Dot Size Control -->
+          <div class="mb-5">
+            <div class="flex justify-between mb-2">
+              <label
+                class="text-sm font-bold text-gray-400 uppercase tracking-wider"
+                >Dot Radius</label
+              >
+              <span
+                id="val-dot"
+                class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
+                >70</span
+              >
+            </div>
+            <input
+              type="range"
+              id="dotSize"
+              min="5"
+              max="200"
+              value="70"
+              class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            />
+          </div>
+
+          <!-- Gap Size Control -->
+          <div class="mb-5">
+            <div class="flex justify-between mb-2">
+              <label
+                class="text-sm font-bold text-gray-400 uppercase tracking-wider"
+                >Gap Width</label
+              >
+              <span
+                id="val-gap"
+                class="text-sm bg-blue-900 text-blue-200 px-2 py-0.5 rounded font-mono"
+                >40</span
+              >
+            </div>
+            <input
+              type="range"
+              id="gapSize"
+              min="0"
+              max="100"
+              value="40"
+              class="w-full bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            />
+          </div>
+
+          <!-- Dot Color Control -->
+          <div class="mb-5">
+            <label
+              class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2 block"
+              >Dot Color</label
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              ></path>
-            </svg>
-            Download
-          </button>
-          <button
-            onclick="copyCode()"
-            class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-bold py-4 px-4 rounded-xl transition flex justify-center items-center gap-2"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="flex gap-3 items-center bg-gray-800 border border-gray-700 p-3 rounded-lg hover:border-gray-600 transition"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-              ></path>
-            </svg>
-            Copy Code
-          </button>
+              <input
+                type="color"
+                id="dotColor"
+                value="#ef4444"
+                class="w-10 h-10 rounded border-0 cursor-pointer bg-transparent p-0"
+              />
+              <input
+                type="text"
+                id="dotColorText"
+                value="#ef4444"
+                class="bg-transparent text-base w-full outline-none font-mono text-white uppercase"
+              />
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="grid grid-cols-2 gap-4 mt-auto">
+            <button
+              onclick="downloadSVG()"
+              class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-4 rounded-xl transition flex justify-center items-center gap-2 shadow-lg shadow-blue-900/20"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                ></path>
+              </svg>
+              Download
+            </button>
+            <button
+              onclick="copyCode()"
+              class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-bold py-4 px-4 rounded-xl transition flex justify-center items-center gap-2"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                ></path>
+              </svg>
+              Copy Code
+            </button>
+          </div>
         </div>
       </div>
 
@@ -235,18 +297,17 @@
               class="text-xs font-bold text-gray-500 uppercase tracking-widest"
               >Live Preview</span
             >
-            <span class="text-xs text-gray-600">Scales to fit</span>
+            <span id="viewbox-info" class="text-xs text-gray-600"></span>
           </div>
 
           <div
             class="checkerboard relative w-full h-full flex items-center justify-center p-8 lg:p-16"
           >
-            <!-- THE SVG CONTAINER - Will Fill Parent -->
             <div
               id="svg-container"
-              class="w-full h-full max-w-[500px] max-h-[500px] transition-all duration-75 drop-shadow-2xl"
+              class="w-full h-full max-w-[500px] max-h-[500px] transition-all duration-75 drop-shadow-2xl flex items-center justify-center"
             >
-              <!-- SVG injected here by JS -->
+              <p class="text-gray-500 text-sm">Import an SVG to get started</p>
             </div>
           </div>
         </div>
@@ -271,41 +332,156 @@
     </div>
 
     <script>
-      // Configuration
-      const svgViewBox = "0 -960 960 960";
-      // Center of the visual circle
-      const centerX = 480;
-      const centerY = -480;
+      // --- State ---
+      let importedSvg = null; // { content, viewBox, width, height, centerX, centerY, filename }
 
+      // --- DOM Elements ---
       const els = {
         angle: document.getElementById("angle"),
         distance: document.getElementById("distance"),
         dotSize: document.getElementById("dotSize"),
         gapSize: document.getElementById("gapSize"),
-        color: document.getElementById("color"),
-        colorText: document.getElementById("colorText"),
+        dotColor: document.getElementById("dotColor"),
+        dotColorText: document.getElementById("dotColorText"),
         container: document.getElementById("svg-container"),
         output: document.getElementById("output-code"),
         lAngle: document.getElementById("val-angle"),
         lDist: document.getElementById("val-dist"),
         lDot: document.getElementById("val-dot"),
         lGap: document.getElementById("val-gap"),
+        dropZone: document.getElementById("drop-zone"),
+        fileInput: document.getElementById("file-input"),
+        dropContent: document.getElementById("drop-zone-content"),
+        dropLoaded: document.getElementById("drop-zone-loaded"),
+        loadedFilename: document.getElementById("loaded-filename"),
+        controls: document.getElementById("controls-section"),
+        viewboxInfo: document.getElementById("viewbox-info"),
       };
 
-      const mainPathData =
-        "M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z";
+      // --- SVG Import ---
 
-      // Generates SVG String
-      // isPreview: if true, width/height set to 100% to fill screen
-      // if false, width/height set to 24px for download
+      function parseSvgFile(svgText, filename) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgText, "image/svg+xml");
+        const svgEl = doc.querySelector("svg");
+
+        if (!svgEl) {
+          alert("Could not find an <svg> element in the file.");
+          return null;
+        }
+
+        // Extract viewBox
+        let vb = svgEl.getAttribute("viewBox");
+        let vbX = 0, vbY = 0, vbW = 0, vbH = 0;
+
+        if (vb) {
+          const parts = vb.trim().split(/[\s,]+/).map(Number);
+          [vbX, vbY, vbW, vbH] = parts;
+        } else {
+          // Try width/height attributes
+          vbW = parseFloat(svgEl.getAttribute("width")) || 100;
+          vbH = parseFloat(svgEl.getAttribute("height")) || 100;
+          vb = `${vbX} ${vbY} ${vbW} ${vbH}`;
+        }
+
+        // Extract inner content (everything inside the <svg> tag)
+        const innerContent = svgEl.innerHTML;
+
+        // Calculate center
+        const centerX = vbX + vbW / 2;
+        const centerY = vbY + vbH / 2;
+
+        // Set distance slider max based on viewBox size
+        const maxDim = Math.max(vbW, vbH);
+        els.distance.max = Math.round(maxDim * 0.75);
+        els.distance.value = Math.round(maxDim * 0.45);
+        els.dotSize.max = Math.round(maxDim * 0.2);
+        els.dotSize.value = Math.round(maxDim * 0.07);
+        els.gapSize.max = Math.round(maxDim * 0.1);
+        els.gapSize.value = Math.round(maxDim * 0.04);
+
+        // Collect existing attributes from the SVG (excluding what we'll manage)
+        const skipAttrs = new Set(["xmlns", "width", "height", "viewbox", "viewBox"]);
+        let extraAttrs = "";
+        for (const attr of svgEl.attributes) {
+          if (!skipAttrs.has(attr.name) && !skipAttrs.has(attr.name.toLowerCase())) {
+            extraAttrs += ` ${attr.name}="${attr.value}"`;
+          }
+        }
+
+        return {
+          innerContent,
+          viewBox: vb,
+          vbX, vbY, vbW, vbH,
+          centerX,
+          centerY,
+          extraAttrs,
+          filename: filename || "icon.svg",
+        };
+      }
+
+      function handleSvgFile(file) {
+        if (!file || !file.name.toLowerCase().endsWith(".svg")) {
+          alert("Please select an SVG file.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = parseSvgFile(e.target.result, file.name);
+          if (result) {
+            importedSvg = result;
+            // Show loaded state
+            els.dropContent.classList.add("hidden");
+            els.dropLoaded.classList.remove("hidden");
+            els.loadedFilename.textContent = file.name;
+            els.loadedFilename.title = file.name;
+            // Show controls
+            els.controls.classList.remove("hidden");
+            els.viewboxInfo.textContent = `viewBox: ${result.viewBox}`;
+            update();
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      // File input change
+      els.fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleSvgFile(e.target.files[0]);
+        }
+      });
+
+      // Drag and drop
+      els.dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        els.dropZone.classList.add("dragover");
+      });
+      els.dropZone.addEventListener("dragleave", () => {
+        els.dropZone.classList.remove("dragover");
+      });
+      els.dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        els.dropZone.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) {
+          handleSvgFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      // --- SVG Generation ---
+
       function generateSVG(isPreview) {
+        if (!importedSvg) return "";
+
         const angleDeg = parseInt(els.angle.value);
         const distance = parseInt(els.distance.value);
         const dotR = parseInt(els.dotSize.value);
         const gap = parseInt(els.gapSize.value);
-        const color = els.color.value;
+        const dotColor = els.dotColor.value;
 
-        // Math to position dot
+        const { centerX, centerY, viewBox, vbX, vbY, vbW, vbH, innerContent, extraAttrs } = importedSvg;
+
+        // Position dot using angle and distance from center
         const angleRad = angleDeg * (Math.PI / 180);
         const cx = Math.round(centerX + distance * Math.cos(angleRad));
         const cy = Math.round(centerY - distance * Math.sin(angleRad));
@@ -314,78 +490,88 @@
         // Dimensions
         const dims = isPreview
           ? 'width="100%" height="100%"'
-          : 'height="24px" width="24px"';
+          : `width="24px" height="24px"`;
 
-        return `<svg xmlns="http://www.w3.org/2000/svg" ${dims} viewBox="${svgViewBox}" fill="${color}">
+        // Use a unique mask ID to avoid conflicts
+        const maskId = "dot-mask";
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" ${dims} viewBox="${viewBox}"${extraAttrs}>
   <defs>
-    <mask id="cut-dot">
-      <rect x="0" y="-960" width="960" height="960" fill="white"/>
+    <mask id="${maskId}">
+      <rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}" fill="white"/>
       <circle cx="${cx}" cy="${cy}" r="${maskRadius}" fill="black"/>
     </mask>
   </defs>
-  <path mask="url(#cut-dot)" d="${mainPathData}"/>
-  <circle cx="${cx}" cy="${cy}" r="${dotR}" fill="${color}"/>
+  <g mask="url(#${maskId})">
+    ${innerContent.trim()}
+  </g>
+  <circle cx="${cx}" cy="${cy}" r="${dotR}" fill="${dotColor}"/>
 </svg>`;
       }
 
       function update() {
-        // Update Labels
+        if (!importedSvg) return;
+
+        // Update labels
         els.lAngle.innerText = els.angle.value + "°";
         els.lDist.innerText = els.distance.value;
         els.lDot.innerText = els.dotSize.value;
         els.lGap.innerText = els.gapSize.value;
-        els.colorText.value = els.color.value;
+        els.dotColorText.value = els.dotColor.value;
 
-        // Render Visual Preview (Big)
+        // Render preview
         els.container.innerHTML = generateSVG(true);
 
-        // Generate Code (Small/Standard)
+        // Generate code output
         els.output.value = generateSVG(false);
       }
 
       function downloadSVG() {
         const svgContent = els.output.value;
+        if (!svgContent) return;
         const blob = new Blob([svgContent], { type: "image/svg+xml" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "unread-history-icon.svg";
+        const name = importedSvg
+          ? importedSvg.filename.replace(".svg", "-dot.svg")
+          : "icon-dot.svg";
+        a.download = name;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       }
 
       function copyCode() {
         const copyText = els.output;
+        if (!copyText.value) return;
         copyText.select();
         copyText.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(copyText.value).then(() => {
-          // Simple visual feedback
-          const originalBtnText = document.querySelector(
-            'button[onclick="copyCode()"]'
-          ).innerHTML;
           const btn = document.querySelector('button[onclick="copyCode()"]');
+          const originalBtnText = btn.innerHTML;
           btn.innerHTML = `<span class="text-green-400 font-bold">Copied!</span>`;
           setTimeout(() => (btn.innerHTML = originalBtnText), 2000);
         });
       }
 
+      // --- Event Listeners ---
       const inputs = [
         els.angle,
         els.distance,
         els.dotSize,
         els.gapSize,
-        els.color,
+        els.dotColor,
       ];
       inputs.forEach((i) => i.addEventListener("input", update));
 
-      els.colorText.addEventListener("input", (e) => {
-        els.color.value = e.target.value;
-        update();
+      els.dotColorText.addEventListener("input", (e) => {
+        if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+          els.dotColor.value = e.target.value;
+          update();
+        }
       });
-
-      // Initial Render
-      update();
     </script>
   </body>
 </html>
